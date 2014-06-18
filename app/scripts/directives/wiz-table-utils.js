@@ -12,11 +12,15 @@ angular.module('editableTableApp')
     };
 
     function createRowElement(rowId){
-      return angular.element('<tr class=\'' + rowId + '\'></tr>');
+      var tr = angular.element('<tr></tr>');
+      tr.attr('row',rowId);
+      return tr;
     }
 
     function createCellElement(colId){
-      return angular.element('<td class=\'' + colId + '\'></td>');
+      var td = angular.element('<td></td>');
+      td.attr('col',colId);
+      return td;
     }
 
     function belongsTo(element,compareFunc){
@@ -38,13 +42,13 @@ angular.module('editableTableApp')
     */
     public.createTableContent = function(data){
       var rows = [];
-      for (var i = 0; i < data.length; i++) {
-        var rowData = data[i];
-        var tr = createRowElement(createRowId(i));
+      for (var r = 0; r < data.length; r++) {
+        var rowData = data[r];
+        var tr = createRowElement(r);
 
-        for (var j = 0; j < rowData.length; j++) {
-          var td = createCellElement(createColumnId(j));
-          td.html(rowData[j]); 
+        for (var c = 0; c < rowData.length; c++) {
+          var td = createCellElement(c);
+          td.html(rowData[c]); 
           tr.append(td);
         };          
 
@@ -58,7 +62,7 @@ angular.module('editableTableApp')
       if (!cell){
         return undefined;
       }
-      return cell.getBoundingClientRect();
+      return cell[0].getBoundingClientRect();
     };
 
     public.getTargetCell = function(event){
@@ -73,27 +77,37 @@ angular.module('editableTableApp')
       });
 
       if (belongsToCell) {
-        return event.target;
+        return $(event.target);
       }
 
       return undefined;
-    }
+    };
+
+    public.setVisibility = function(popup,isVisible){
+      popup.css('display',isVisible ? 'block' : 'none');
+    };
 
     public.setEditorPosition = function (popup,cell){
       var editable = popup.children()[0];
       var dim = public.getCellDimentions(cell); 
-      popup.css('display','block');
+      
       popup.css('width',dim.width);
       popup.css('height',dim.height);
       popup.css('top',dim.top + window.scrollY);
       popup.css('left',dim.left);
       $(editable).css('padding',$(cell).css('padding'));
       $(editable).css('height',dim.height);
-    }
+    };
 
     public.setFocusOnEditor = function (popup){
       var editable = popup.children()[0];
       $(editable).focus();
+    };
+
+    public.getCellCoordinates = function(cell){
+      var col = cell.attr('col');
+      var row = cell.parent().attr('row');
+      return {'col': col,'row': row};
     }
 
     return public;
