@@ -58,14 +58,9 @@ angular.module('editableTableApp')
 
               console.log('showCellEditor');
 
-              var dim = Utils.getCellDimentions(cell);
-              popup.css('display','block');
-              popup.css('width',dim.width);
-              popup.css('height',dim.height);
-              popup.css('top',dim.top + window.scrollY);
-              popup.css('left',dim.left);
-              $(editable).css('padding',$(cell).css('padding'));
-              $(editable).css('height',dim.height);
+              Utils.setEditorPosition(popup,cell);
+
+              Utils.setFocusOnEditor(popup);
             }
           }
         };

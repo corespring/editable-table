@@ -68,7 +68,6 @@ angular.module('editableTableApp')
       }
 
       var target = event.target;
-
       var belongsToCell = belongsTo(event.target,function(el){
         return el.nodeName.toLowerCase() == 'td';
       });
@@ -78,6 +77,23 @@ angular.module('editableTableApp')
       }
 
       return undefined;
+    }
+
+    public.setEditorPosition = function (popup,cell){
+      var editable = popup.children()[0];
+      var dim = public.getCellDimentions(cell); 
+      popup.css('display','block');
+      popup.css('width',dim.width);
+      popup.css('height',dim.height);
+      popup.css('top',dim.top + window.scrollY);
+      popup.css('left',dim.left);
+      $(editable).css('padding',$(cell).css('padding'));
+      $(editable).css('height',dim.height);
+    }
+
+    public.setFocusOnEditor = function (popup){
+      var editable = popup.children()[0];
+      $(editable).focus();
     }
 
     return public;
