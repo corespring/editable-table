@@ -107,8 +107,44 @@ angular.module('editableTableApp')
     public.getCellCoordinates = function(cell){
       var col = cell.attr('col');
       var row = cell.parent().attr('row');
-      return {'col': col,'row': row};
+      return {'col': parseInt(col),'row': parseInt(row)};
     }
+
+    function getDataDimentions(data){
+      if (!data || !$.isArray(data) || data.length == 0 || !$.isArray(data[0])){
+        return undeined;
+      };
+      return {"cols":data[0].length , "rows":data.length};
+    }
+
+    /**
+    *
+    */
+    public.getNextCellToEdit = function(data,currEditPos){
+      if (!currEditPos){
+        return undefined;
+      };
+
+      var dim = getDataDimentions(data);
+      if (!dim){
+        return undefined;
+      }
+
+      var next = {"col":undefined,"row":undefined};
+
+      if (currEditPos.col < dim.cols - 1){
+        next.col = currEditPos.col + 1;
+        next.row = currEditPos.row;
+      }else{
+        if (currEditPos.row < dim.rows  - 1){
+          next.row = currEditPos.row + 1;
+        }else{
+          next.row = "new";
+        }
+        next.col = 0;
+      }
+      return next;
+    };
 
     return public;
   })
