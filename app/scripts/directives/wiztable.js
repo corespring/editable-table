@@ -53,10 +53,12 @@ angular.module('editableTableApp')
             };
 
             function startEditing(cell){
-              scope.cellEdited = cell;
-              scope.coordEdited = Utils.getCellCoordinates(cell);
-              scope.dataEdited = scope.data[scope.coordEdited.row][scope.coordEdited.col];
-              scope.$apply();
+
+              scope.$apply(function(){
+                scope.cellEdited = cell;
+                scope.coordEdited = Utils.getCellCoordinates(cell);
+                scope.dataEdited = scope.data[scope.coordEdited.row][scope.coordEdited.col];
+              });
               console.log(scope.dataEdited);
               showCellEditor(cell);
             }
@@ -76,9 +78,10 @@ angular.module('editableTableApp')
             }
 
             function commit(newData){
-              updateCellData(newData);
-              updateCellContents();
-              scope.$apply();       
+              scope.$apply(function(){
+                updateCellData(newData);
+                updateCellContents();
+              });       
               Utils.setVisibility(popup,false);
               scope.cellEdited = undefined;
               scope.coordEdited = undefined;
