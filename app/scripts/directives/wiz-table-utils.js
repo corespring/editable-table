@@ -27,7 +27,7 @@ angular.module('editableTableApp')
 
       var el = element;
 
-      while(el && el.nodeName != undefined){
+      while(el && el.nodeName != undefined){ 
         if (compareFunc(el)){
           return true;
         };
@@ -40,11 +40,14 @@ angular.module('editableTableApp')
     /**
     * Returns newly created array of rows
     */
-    public.createTableContent = function(data){
+    public.createTableContent = function(data,startRow){
       var rows = [];
+      if (startRow == undefined){
+        startRow = 0;
+      }
       for (var r = 0; r < data.length; r++) {
         var rowData = data[r];
-        var tr = createRowElement(r);
+        var tr = createRowElement(r + startRow);
 
         for (var c = 0; c < rowData.length; c++) {
           var td = createCellElement(c);
@@ -110,7 +113,7 @@ angular.module('editableTableApp')
       return {'col': parseInt(col),'row': parseInt(row)};
     }
 
-    function getDataDimentions(data){
+    public.getDataDimentions = function(data){
       if (!data || !$.isArray(data) || data.length == 0 || !$.isArray(data[0])){
         return undeined;
       };
@@ -125,7 +128,7 @@ angular.module('editableTableApp')
         return undefined;
       };
 
-      var dim = getDataDimentions(data);
+      var dim = public.getDataDimentions(data);
       if (!dim){
         return undefined;
       }
@@ -135,12 +138,8 @@ angular.module('editableTableApp')
       if (currEditPos.col < dim.cols - 1){
         next.col = currEditPos.col + 1;
         next.row = currEditPos.row;
-      }else{
-        if (currEditPos.row < dim.rows  - 1){
-          next.row = currEditPos.row + 1;
-        }else{
-          next.row = "new";
-        }
+      }else{        
+        next.row = currEditPos.row + 1;
         next.col = 0;
       }
       return next;

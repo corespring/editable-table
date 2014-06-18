@@ -88,18 +88,30 @@ angular.module('editableTableApp')
               commit(event.target.innerHTML);
             }
 
-
-
             function editableKeyDownHandler(event){
               var TABKEY = 9;
               if(event.keyCode == TABKEY){
                 event.preventDefault();
                 var nextCellToEdit = Utils.getNextCellToEdit(scope.data,scope.coordEdited);
+
                 commit(event.target.innerHTML);
+                if (nextCellToEdit && nextCellToEdit.row == scope.data.length ){
+                  addNewRow(nextCellToEdit.row);
+                };
+
                 var nextRow = element.find("tr[row='" + nextCellToEdit.row + "']");
-                var nextCell = nextRow.find("td[col='" + nextCellToEdit.col + "']");             
-                startEditing(nextCell);
+                var nextCell = nextRow.find("td[col='" + nextCellToEdit.col + "']");  
+
+                startEditing(nextCell);                          
               }
+            };
+
+            function addNewRow(startRow){
+              var dim = Utils.getDataDimentions(scope.data);
+              var newRowData = new Array(dim.cols);
+              scope.data.push(newRowData);
+              var additionalRow = Utils.createTableContent([newRowData],startRow); 
+              element.append(additionalRow);
             }
           }
         };
