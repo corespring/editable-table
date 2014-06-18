@@ -19,6 +19,20 @@ angular.module('editableTableApp')
       return angular.element('<td class=\'' + colId + '\'></td>');
     }
 
+    function belongsTo(element,compareFunc){
+
+      var el = element;
+
+      while(el && el.nodeName != undefined){
+        if (compareFunc(el)){
+          return true;
+        };
+        el = el.parentElement;
+      }
+
+      return false;
+    }
+
     /**
     * Returns newly created array of rows
     */
@@ -48,7 +62,22 @@ angular.module('editableTableApp')
     };
 
     public.getTargetCell = function(event){
-      return event.target;
+
+      if (event.target == undefined){
+        return undefined;
+      }
+
+      var target = event.target;
+
+      var belongsToCell = belongsTo(event.target,function(el){
+        return el.nodeName.toLowerCase() == 'td';
+      });
+
+      if (belongsToCell) {
+        return event.target;
+      }
+
+      return undefined;
     }
 
     return public;

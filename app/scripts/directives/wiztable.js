@@ -13,9 +13,9 @@ angular.module('editableTableApp')
 
         var popupTemplate = 
         '<div style="position:absolute;background-color:white">' +
-        //' <div contenteditable="true">' +
-        //'     popup' +
-        //'  </div>' +
+        ' <div contenteditable="true" style="top:0px;bottom:0px;left:0px;right:0px">' +
+        '     popup' +
+        '  </div>' +
         '</div>' ;
 
         return {
@@ -55,16 +55,17 @@ angular.module('editableTableApp')
             };
 
             function showCellEditor(cell){
+
+              console.log('showCellEditor');
+
               var dim = Utils.getCellDimentions(cell);
-              var scrollingPos = 
               popup.css('display','block');
               popup.css('width',dim.width);
               popup.css('height',dim.height);
               popup.css('top',dim.top + window.scrollY);
               popup.css('left',dim.left);
-              //$(editable).css('padding',$(cell).css('padding'));
-              //popup.css('background-color','white');
-              //popup.css()
+              $(editable).css('padding',$(cell).css('padding'));
+              $(editable).css('height',dim.height);
             }
           }
         };
