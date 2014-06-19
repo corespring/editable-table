@@ -11,8 +11,12 @@ angular.module('editableTableApp')
     ['WizTableUtils','$document',
       function (Utils) {
 
+
+
         var popupTemplate = 
-        '<div style="position:absolute;background-color:white">' +
+        '<input class=\'focuscatcher\' type="text" ' + 
+        '   style=\'width:0px;height:0px;display:block;position:relative;padding:0px;border:0px;\'></input>' +      
+        '<div class=\'editor\' style="position:absolute;background-color:white">' +
         ' <div contenteditable="true" style="top:0px;bottom:0px;left:0px;right:0px">' +
         //'     {{data[coordEdited.row][coordEdited.col]}}' +
         '  </div>' +
@@ -32,10 +36,14 @@ angular.module('editableTableApp')
             scope.coordEdited = undefined;
             scope.cellEdited = undefined;
 
-            var popup = $(element.children()[0]);
-            var editable = $($(popup).children()[0]);
+            element.css('tabindex',0);
+            var popup = element.find('.editor');
+            var editable = $(popup).children().first();
+            var focuscatcher = element.find('.focuscatcher');
 
             popup.css('display', 'none')
+
+            focuscatcher.focus(elementFocusIn);
 
             element.append(Utils.createTableContent(scope.data));
 
@@ -43,6 +51,12 @@ angular.module('editableTableApp')
 
             editable.blur(editableBlurHandler);
             editable.keydown(editableKeyDownHandler);
+
+            function elementFocusIn(event){
+              console.log('elementFocusIn');
+              var firstCellEl = Utils.getCellElementAtCoord(element,{'row':0,'col':0});
+              startEditing(firstCellEl);  
+            }
 
 
             function mouseUpHandler(event) {            
@@ -98,36 +112,32 @@ angular.module('editableTableApp')
 
               if(event.keyCode == TABKEY){
 
-                var nextCellToEdit = Utils.getNextCellToEdit(scope.data,scope.coordEdited,event.shiftKey);
+                var nextCellCoord = Utils.getNextCellToEdit(scope.data,scope.coordEdited,event.shiftKey);
 
                 commit(event.target.innerHTML);
 
                 if (event.shiftKey){ 
-                  if (nextCellToEdit.row >= 0){
+                  if (nextCellCoord.row >= 0){
                     event.preventDefault();
                   }else{
                     return;
                   }                    
                 }else{
                   event.preventDefault();
-                  if (nextCellToEdit.row >= scope.data.length ){
-                    addNewRow(nextCellToEdit.row);
+                  if (nextCellCoord.row >= scope.data.length ){
+                    addNewRow(nextCellCoord.row);
                   }
                 }
 
-                var nextRow = element.find("tr[row='" + nextCellToEdit.row + "']");
-                var nextCell = nextRow.find("td[col='" + nextCellToEdit.col + "']");  
+                var nextCellEl = Utils.getCellElementAtCoord(element,nextCellCoord);
 
-                startEditing(nextCell);                                            
+                startEditing(nextCellEl);                                            
               }
             };
 
             function addNewRow(startRow){
               var dim = Utils.getDataDimentions(scope.data);
-              var newRowData = new Array(dim.cols);
-              for (var i = 0; i < newRowData.length; i++) {
-                newRowData[i] = "";
-              };
+              var newRowData = Utils.createEmptyRowData(dim.cols);
               scope.data.push(newRowData);
               var additionalRow = Utils.createTableContent([newRowData],startRow); 
               element.append(additionalRow);

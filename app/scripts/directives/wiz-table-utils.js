@@ -151,6 +151,11 @@ angular.module('editableTableApp')
       return next;
     };
 
+    public.getCellElementAtCoord = function(element,nextCellCoord){
+      var nextRow = element.find("tr[row='" + nextCellCoord.row + "']");
+      return nextRow.find("td[col='" + nextCellCoord.col + "']");
+    }
+
     public.createEmptyRowData = function(numcols){
       var newRowData = new Array(numcols);
       for (var i = 0; i < numcols; i++) {
