@@ -11,15 +11,12 @@ angular.module('editableTableApp')
     ['WizTableUtils','$document',
       function (Utils) {
 
-
+        var focuscatcherTemplate = '<input type="text" ' + 
+        '   style=\'width:0px;height:0pxpx;display:block;padding:0px;border:0px;\'></input>';
 
         var popupTemplate = 
-        '<input class=\'focuscatcher\' type="text" ' + 
-        '   style=\'width:0px;height:0px;display:block;position:relative;padding:0px;border:0px;\'></input>' +      
-        '<div class=\'editor\' style="position:absolute;background-color:white">' +
-        ' <div contenteditable="true" style="top:0px;bottom:0px;left:0px;right:0px">' +
-        //'     {{data[coordEdited.row][coordEdited.col]}}' +
-        '  </div>' +
+        '<div class=\'editor\' style="display:none;position:absolute;background-color:white">' +
+        ' <div contenteditable="true" style="top:0px;bottom:0px;left:0px;right:0px"></div>' +
         '</div>' ;
 
         return {
@@ -36,17 +33,13 @@ angular.module('editableTableApp')
             scope.coordEdited = undefined;
             scope.cellEdited = undefined;
 
-            element.css('tabindex',0);
+            var focuscatcher = $(angular.element(focuscatcherTemplate));
+            element.before(focuscatcher);
             var popup = element.find('.editor');
             var editable = $(popup).children().first();
-            var focuscatcher = element.find('.focuscatcher');
-
-            popup.css('display', 'none')
 
             focuscatcher.focus(elementFocusIn);
-
             element.append(Utils.createTableContent(scope.data));
-
             element.on('mouseup', mouseUpHandler);
 
             editable.blur(editableBlurHandler);
