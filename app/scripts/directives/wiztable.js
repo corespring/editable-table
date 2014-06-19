@@ -14,7 +14,7 @@ angular.module('editableTableApp')
         var popupTemplate = 
         '<div style="position:absolute;background-color:white">' +
         ' <div contenteditable="true" style="top:0px;bottom:0px;left:0px;right:0px">' +
-        '     {{data[coordEdited.row][coordEdited.col]}}' +
+        //'     {{data[coordEdited.row][coordEdited.col]}}' +
         '  </div>' +
         '</div>' ;
 
@@ -65,6 +65,7 @@ angular.module('editableTableApp')
             }
 
             function showCellEditor(cell){
+              editable.html(scope.dataEdited);
               Utils.setVisibility(popup,true);
               Utils.setEditorPosition(popup,cell);
               Utils.setFocusOnEditor(popup);
@@ -124,6 +125,9 @@ angular.module('editableTableApp')
             function addNewRow(startRow){
               var dim = Utils.getDataDimentions(scope.data);
               var newRowData = new Array(dim.cols);
+              for (var i = 0; i < newRowData.length; i++) {
+                newRowData[i] = "";
+              };
               scope.data.push(newRowData);
               var additionalRow = Utils.createTableContent([newRowData],startRow); 
               element.append(additionalRow);

@@ -23,19 +23,32 @@ angular.module('editableTableApp')
       return td;
     }
 
-    function belongsTo(element,compareFunc){
+    function findMatchingParent(element,isOwner){
 
       var el = element;
 
       while(el && el.nodeName != undefined){ 
-        if (compareFunc(el)){
-          return true;
+        if (isOwner(el)){
+          return $(el);
         };
         el = el.parentElement;
       }
 
-      return false;
+      return undefined;
     }
+
+    public.getTargetCell = function(event){
+
+      if (event.target == undefined){
+        return undefined;
+      }
+
+      function isOwner(el){
+        return el.nodeName.toLowerCase() === 'td';
+      };
+
+      return findMatchingParent(event.target,isOwner);
+    };
 
     /**
     * Returns newly created array of rows
@@ -66,24 +79,6 @@ angular.module('editableTableApp')
         return undefined;
       }
       return cell[0].getBoundingClientRect();
-    };
-
-    public.getTargetCell = function(event){
-
-      if (event.target == undefined){
-        return undefined;
-      }
-
-      var target = event.target;
-      var belongsToCell = belongsTo(event.target,function(el){
-        return el.nodeName.toLowerCase() == 'td';
-      });
-
-      if (belongsToCell) {
-        return $(event.target);
-      }
-
-      return undefined;
     };
 
     public.setVisibility = function(popup,isVisible){
@@ -155,6 +150,14 @@ angular.module('editableTableApp')
 
       return next;
     };
+
+    public.createEmptyRowData = function(numcols){
+      var newRowData = new Array(numcols);
+      for (var i = 0; i < numcols; i++) {
+        newRowData[i] = "";
+      };
+      return newRowData;
+    }
 
     return public;
   })
