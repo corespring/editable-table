@@ -123,7 +123,7 @@ angular.module('editableTableApp')
     /**
     *
     */
-    public.getNextCellToEdit = function(data,currEditPos){
+    public.getNextCellToEdit = function(data,currEditPos,back){
       if (!currEditPos){
         return undefined;
       };
@@ -135,13 +135,24 @@ angular.module('editableTableApp')
 
       var next = {"col":undefined,"row":undefined};
 
-      if (currEditPos.col < dim.cols - 1){
-        next.col = currEditPos.col + 1;
-        next.row = currEditPos.row;
-      }else{        
-        next.row = currEditPos.row + 1;
-        next.col = 0;
+      if (back){
+        if (currEditPos.col > 0){
+          next.col = currEditPos.col - 1;
+          next.row = currEditPos.row;
+        }else{        
+          next.row = currEditPos.row - 1;
+          next.col = dim.cols - 1;
+        }
+      }else{
+        if (currEditPos.col < dim.cols - 1){
+          next.col = currEditPos.col + 1;
+          next.row = currEditPos.row;
+        }else{        
+          next.row = currEditPos.row + 1;
+          next.col = 0;
+        }
       }
+
       return next;
     };
 

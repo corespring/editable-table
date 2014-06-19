@@ -58,9 +58,10 @@ angular.module('editableTableApp')
                 scope.cellEdited = cell;
                 scope.coordEdited = Utils.getCellCoordinates(cell);
                 scope.dataEdited = scope.data[scope.coordEdited.row][scope.coordEdited.col];
+                console.log(scope.dataEdited);
+                showCellEditor(cell);
               });
-              console.log(scope.dataEdited);
-              showCellEditor(cell);
+              
             }
 
             function showCellEditor(cell){
@@ -81,10 +82,10 @@ angular.module('editableTableApp')
               scope.$apply(function(){
                 updateCellData(newData);
                 updateCellContents();
-              });       
-              Utils.setVisibility(popup,false);
-              scope.cellEdited = undefined;
-              scope.coordEdited = undefined;
+                Utils.setVisibility(popup,false);
+                scope.cellEdited = undefined;
+                scope.coordEdited = undefined;
+              });                     
             }
             
             function editableBlurHandler(event){
@@ -93,19 +94,30 @@ angular.module('editableTableApp')
 
             function editableKeyDownHandler(event){
               var TABKEY = 9;
+
               if(event.keyCode == TABKEY){
-                event.preventDefault();
-                var nextCellToEdit = Utils.getNextCellToEdit(scope.data,scope.coordEdited);
+
+                var nextCellToEdit = Utils.getNextCellToEdit(scope.data,scope.coordEdited,event.shiftKey);
 
                 commit(event.target.innerHTML);
-                if (nextCellToEdit && nextCellToEdit.row == scope.data.length ){
-                  addNewRow(nextCellToEdit.row);
-                };
+
+                if (event.shiftKey){ 
+                  if (nextCellToEdit.row >= 0){
+                    event.preventDefault();
+                  }else{
+                    return;
+                  }                    
+                }else{
+                  event.preventDefault();
+                  if (nextCellToEdit.row >= scope.data.length ){
+                    addNewRow(nextCellToEdit.row);
+                  }
+                }
 
                 var nextRow = element.find("tr[row='" + nextCellToEdit.row + "']");
                 var nextCell = nextRow.find("td[col='" + nextCellToEdit.col + "']");  
 
-                startEditing(nextCell);                          
+                startEditing(nextCell);                                            
               }
             };
 
