@@ -38,19 +38,12 @@ angular.module('editableTableApp')
             var popup = element.find('.editor');
             var editable = $(popup).children().first();
 
-            focuscatcher.focus(elementFocusIn);
+            focuscatcher.focus(focuscatcherFocusIn);
             element.append(Utils.createTableContent(scope.data));
             element.on('mouseup', mouseUpHandler);
 
             editable.blur(editableBlurHandler);
             editable.keydown(editableKeyDownHandler);
-
-            function elementFocusIn(event){
-              console.log('elementFocusIn');
-              var firstCellEl = Utils.getCellElementAtCoord(element,{'row':0,'col':0});
-              startEditing(firstCellEl);  
-            }
-
 
             function mouseUpHandler(event) {            
               var cell = Utils.getTargetCell(event);              
@@ -95,9 +88,22 @@ angular.module('editableTableApp')
                 scope.coordEdited = undefined;
               });                     
             }
+
+            function focuscatcherFocusIn(event){
+              console.log('focuscatcherFocusIn')
+              if (event.relatedTarget != editable.get(0)){
+                var firstCellEl = Utils.getCellElementAtCoord(element,{'row':0,'col':0});
+                startEditing(firstCellEl);    
+              }
+              else
+              {
+                event.preventDefault();
+              } 
+            }
             
-            function editableBlurHandler(event){
+            function editableBlurHandler(event){              
               commit(event.target.innerHTML);
+              focuscatcher.prop('disabled',false);
             }
 
             function editableKeyDownHandler(event){
@@ -113,6 +119,7 @@ angular.module('editableTableApp')
                   if (nextCellCoord.row >= 0){
                     event.preventDefault();
                   }else{
+                    focuscatcher.prop('disabled',true);
                     return;
                   }                    
                 }else{
