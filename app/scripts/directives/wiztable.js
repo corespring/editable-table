@@ -43,6 +43,7 @@ angular.module('editableTableApp')
             element.on('mouseup', mouseUpHandler);
 
             editable.blur(editableBlurHandler);
+            //editable.focus(editableFocusHandler);
             editable.keydown(editableKeyDownHandler);
 
             function mouseUpHandler(event) {            
@@ -101,28 +102,32 @@ angular.module('editableTableApp')
               } 
             }
             
-            function editableBlurHandler(event){              
+            function editableBlurHandler(event){   
+              console.log('editableBlurHandler ' + event.target);
               commit(event.target.innerHTML);
               focuscatcher.prop('disabled',false);
             }
 
             function editableKeyDownHandler(event){
+              console.log('editableKeyDownHandler');
               var TABKEY = 9;
 
               if(event.keyCode == TABKEY){
 
                 var nextCellCoord = Utils.getNextCellToEdit(scope.data,scope.coordEdited,event.shiftKey);
 
-                commit(event.target.innerHTML);
+                //commit(event.target.innerHTML);
 
                 if (event.shiftKey){ 
                   if (nextCellCoord.row >= 0){
+                    commit(event.target.innerHTML);
                     event.preventDefault();
                   }else{
                     focuscatcher.prop('disabled',true);
                     return;
                   }                    
                 }else{
+                  commit(event.target.innerHTML);
                   event.preventDefault();
                   if (nextCellCoord.row >= scope.data.length ){
                     addNewRow(nextCellCoord.row);
